@@ -17,19 +17,21 @@ class NegociacoesView{                                                          
                 </thead>
                 
                 <tbody>
-                    ${model.Negociacoes.map((n) => {                            //pegando variavel criada aqui e puxando o getter negociacao executando o metodo map que retorna 
-                        return `
-                           <tr>
+                    ${model.Negociacoes.map((n) =>                              //pegando variavel criada aqui e puxando o getter negociacao executando o metodo map que retorna 
+                           `
+                            <tr>
                                 <td>${DateHelper.dataParaTexto(n.data)}</td>    
                                 <td>${n.quantidade}</td>
                                 <td>${n.valor}</td>
                                 <td>${n.volume}</td>
-                           </tr> 
-                        `;
-                    })};    
+                           </tr>
+                        
+                        `).join('')};
                 </tbody>
-                
                 <tfoot>
+                        <td colspan="3"></td>
+                            <td>${model.Negociacoes.reduce((total, n) => total + n.volume, 0.0)
+                        }</td>
                 </tfoot>
             </table>
         `;

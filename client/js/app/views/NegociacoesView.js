@@ -1,10 +1,10 @@
-class NegociacoesView{                                                          //objeto criado para visualização das tabelas que já foram criadas
+class NegociacoesView extends View{                                                          //objeto criado para visualização das tabelas que já foram criadas
 
-    constructor(elemento){                                                      //constructor responsavel por receber NegociacoesView e atribui-lo a uma variavel
-        this._elemento = elemento;                                              //variavel a qual a div foi recebida
+    constructor(elemento){
+        super(elemento);
     }
 
-    _template(model){                                                           //metodo a qual cria a tabela para receber as negociacoes
+    template(model){                                                           //metodo a qual cria a tabela para receber as negociacoes
         return `                                                                
             <table class="table table-hover table-bordered">
                 <thead>
@@ -34,9 +34,6 @@ class NegociacoesView{                                                          
                         }</td>
                 </tfoot>
             </table>
-        `;
-    }
-    update(model){                                                              //metodo update executado no controlador recebendo um parametro 
-        this._elemento.innerHTML = this._template(model);                       //puxando o inner html do elemento recebido no contructor e atribuindo o template (baseado no modelo)
+        `
     }
 }

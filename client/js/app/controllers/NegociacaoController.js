@@ -6,19 +6,33 @@ class NegociacaoController{                                                     
         this._inputData = $('#data');                                           //puxando a data com o query selector do id no input
         this._inputQuantidade = $('#quantidade');                               //puxando a quantidade
         this._inputValor = $('#valor');                                         //puxando valor
-        this._listaNegociacoes = new ListaNegociacoes();                        //Criando novo objeto lista negociacao
+        this._listaNegociacoes = new ListaNegociacoes(model => this._negociacoesView.update(model));
+
         this._negociacoesView = new NegociacoesView($('#negociacoesView'));     //criando novo objeto NegociacaoView recebendo o id criado na div
 
-        this._negociacoesView.update(this._listaNegociacoes);                   //executando o metodo update(a lista de negociacoes) do negociacoesView
+        
+        this._mensagem = new Mensagem();
+        this._mensagemView = new MensagemView($('#mensagemView'));
+        this._mensagemView.update(this._mensagem);
     }
-    adiciona(event){                                                            //função adiciona recebendo event como uma nova classe Negociacao
-        event.preventDefault();                                                 //função para inpedir a pagina de recarregar apos o submit
 
+    apaga(){
+        this._listaNegociacoes.esvazia();
+        this._mensagem.texto = 'Lista apagada com sucesso';
+        this._mensagemView.update(this._mensagem);
+    }
+
+    adiciona(event){                                                            //função adiciona recebendo event como uma nova classe Negociacao
+        event.preventDefault();                                                 //função para inpedir a pagina de recarregar apos o submi
+        
         this._listaNegociacoes.adiciona(this._criaNegociacao());                //chamando metodo adiciona criado no objeto lista negociacoes
-        this._negociacoesView.update(this._listaNegociacoes);                   //chamando metodo de update(lista de negociacoes) criado no negociacoes view
+        
+        this._mensagem.texto = 'Negociação adicionada com sucesso';
+        this._mensagemView.update(this._mensagem);
+        
         this._limpaFormulario();                                                //chamando metodo limpa formulario 
 
-        console.log(this._listaNegociacoes.Negociacoes);                        //console.log de lista negociacoes executando o getter Negociacoes
+        //console.log(this._listaNegociacoes.Negociacoes);                        //console.log de lista negociacoes executando o getter Negociacoes
     }
 
     _criaNegociacao(){                                                          //criando metodo cria negociacao 

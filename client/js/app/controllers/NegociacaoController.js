@@ -2,37 +2,68 @@
 class NegociacaoController{                                                     //responsavel por puxar os dados do index
     constructor(){                                                              //responsavel por pegar as variaveis do index
         let $ = document.querySelector.bind(document);                          // definindo a uma variavel para deixar o codigo menos verboso na puxada dos valores
-
         this._inputData = $('#data');                                           //puxando a data com o query selector do id no input
         this._inputQuantidade = $('#quantidade');                               //puxando a quantidade
-        this._inputValor = $('#valor');                                         //puxando valor
-        this._listaNegociacoes = new ListaNegociacoes(model => this._negociacoesView.update(model));
+        this._inputValor = $('#valor');
 
-        this._negociacoesView = new NegociacoesView($('#negociacoesView'));     //criando novo objeto NegociacaoView recebendo o id criado na div
+        this._listaNegociacoes = new Bind(
+            new ListaNegociacoes(), new NegociacoesView($('#negociacoesView')),
+            'adiciona', 'esvazia')
 
-        
-        this._mensagem = new Mensagem();
-        this._mensagemView = new MensagemView($('#mensagemView'));
-        this._mensagemView.update(this._mensagem);
+        this._mensagem = new Bind(
+            new Mensagem(), new MensagemView($('#mensagemView')),
+            'texto')
     }
 
     apaga(){
         this._listaNegociacoes.esvazia();
         this._mensagem.texto = 'Lista apagada com sucesso';
-        this._mensagemView.update(this._mensagem);
     }
 
     adiciona(event){                                                            //função adiciona recebendo event como uma nova classe Negociacao
         event.preventDefault();                                                 //função para inpedir a pagina de recarregar apos o submi
-        
         this._listaNegociacoes.adiciona(this._criaNegociacao());                //chamando metodo adiciona criado no objeto lista negociacoes
-        
         this._mensagem.texto = 'Negociação adicionada com sucesso';
-        this._mensagemView.update(this._mensagem);
-        
-        this._limpaFormulario();                                                //chamando metodo limpa formulario 
-
+        this._limpaFormulario();                                                //chamando metodo limpa formulario
         //console.log(this._listaNegociacoes.Negociacoes);                        //console.log de lista negociacoes executando o getter Negociacoes
+    }
+
+    importaNegociacoes(){
+        let service = new NegociacaoService();
+
+        Promise.all([
+            service.obterNegociacoesSemana(), 
+            service.obterNegociacoesSemanaAnterior(), 
+            service.obterNegociacoesSemanaRetrasada()
+        ]).then(negociacoes => {
+            negociacoes
+                .reduce((arrayAchatado, array) => arrayAchatado.concat(array), [])
+                .forEach(negociacao => this._listaNegociacoes.adiciona(negociacao));
+                this._mensagem.texto = 'Negociacoes da semana importada com sucesso';
+        }).catch(error => this._mensagem.texto = error);
+        
+        /*
+        service.obterNegociacoesSemana()
+            .then(negociacoes => { 
+                negociacoes.forEach(negociacao => this._listaNegociacoes.adiciona(negociacao));
+                this._mensagem.texto = 'Negociações da semana obtida com sucesso';
+            })
+            .catch(error => this._mensagem.texto = error);
+
+        service.obterNegociacoesSemanaAnterior()
+            .then(negociacoes => {
+                negociacoes.forEach(negociacao => this._listaNegociacoes.adiciona(negociacao));
+                this._mensagem.texto = 'Negociaçoes da semana anterior obtida com sucesso';
+            })
+            .catch(error => this._mensagem.texto = error);
+        
+        service.obterNegociacoesSemanaRetrasada()
+            .then(negociacoes => {
+                negociacoes.forEach(negociacao => this._listaNegociacoes.adiciona(negociacao));
+                this._mensagem.texto = 'Negociaçoes da semana retrasada obtida com sucesso';
+            })
+            .catch(error => this._mensagem.texto = error);
+        */
     }
 
     _criaNegociacao(){                                                          //criando metodo cria negociacao 
